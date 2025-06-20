@@ -1,0 +1,37 @@
+# Go build artifacts
+/bin/
+/build/
+/dist/
+*.exe
+*.out
+*.test
+
+# Go module files (lock/cache)
+go.sum
+go.work.sum
+go.work
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Test results / coverage
+*.coverprofile
+*.cov
+*.testlog
+
+# IDE/editor-specific
+.vscode/
+*.swp
+*.swo
+.idea
+
+# Dependency vendors (if used)
+vendor/
+
+# Temporary files
+tmp/
+*.tmp
