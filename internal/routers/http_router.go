@@ -2,6 +2,7 @@ package routers
 
 import (
 	"fmt"
+	"github.com/aribhuiya/stormgate/internal/proxies/http_proxies"
 	"github.com/aribhuiya/stormgate/internal/routing_strategy"
 	"github.com/aribhuiya/stormgate/internal/utils"
 	"log"
@@ -12,6 +13,7 @@ import (
 type HttpRouter struct {
 	config          ServerConfig
 	routingStrategy routing_strategy.RoutingStrategy
+	proxy           http_proxies.Proxy
 }
 
 type ServerConfig struct {
@@ -34,6 +36,7 @@ func NewHttpRouter(serverCfg ServerConfig, serviceConfigs *[]utils.Services, str
 	return &HttpRouter{
 		config:          serverCfg,
 		routingStrategy: routingStrategy,
+		proxy:           http_proxies.NewBasicProxy(),
 	}
 }
 
@@ -61,6 +64,10 @@ func (r *HttpRouter) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "Not Found", http.StatusNotFound)
 		return
 	}
+
+	// TODO: Call goes to Balancer when ready
+	r.proxy.Forward(w, req, &route.Service.Backends[0])
+
 	_, err = fmt.Fprintf(w, `{
   		"matched_path": "%s",
   		"service": "%s",
