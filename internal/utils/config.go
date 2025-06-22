@@ -5,14 +5,18 @@ import (
 	"os"
 )
 
-type ServerConfig struct {
+type Server struct {
 	BindIp       string `yaml:"bind_ip"`
 	BindPort     int32  `yaml:"bind_port"`
 	ReadTimeOut  int64  `yaml:"read_time_out"`
 	WriteTimeOut int64  `yaml:"write_time_out"`
 }
 
-type ServiceConfig struct {
+type Balancer struct {
+	RoutingStrategy string `yaml:"routing_strategy"`
+}
+
+type Services struct {
 	Name       string   `yaml:"name"`
 	PathPrefix string   `yaml:"path_prefix"`
 	Strategy   string   `yaml:"strategy"`
@@ -20,8 +24,9 @@ type ServiceConfig struct {
 }
 
 type Config struct {
-	Server   ServerConfig    `yaml:"server"`
-	Services []ServiceConfig `yaml:"services"`
+	Server   Server     `yaml:"server"`
+	Services []Services `yaml:"services"`
+	Balancer Balancer   `yaml:"balancer"`
 }
 
 func LoadConfig(path string) (Config, error) {

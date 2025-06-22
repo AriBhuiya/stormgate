@@ -30,7 +30,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 				Depth1Map: map[string]*RouteEntry{
 					"/auth": {
 						Path: "/auth",
-						Service: &utils.ServiceConfig{
+						Service: &utils.Services{
 							Name:       "auth-service",
 							PathPrefix: "/auth",
 							Strategy:   "round-robin",
@@ -42,7 +42,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 			args: args{prefixPath: ptr("/auth/login")},
 			want: &RouteEntry{
 				Path: "/auth",
-				Service: &utils.ServiceConfig{
+				Service: &utils.Services{
 					Name:       "auth-service",
 					PathPrefix: "/auth",
 					Strategy:   "round-robin",
@@ -57,7 +57,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 				Depth2Map: map[string]*RouteEntry{
 					"/api/v1": {
 						Path: "/api/v1",
-						Service: &utils.ServiceConfig{
+						Service: &utils.Services{
 							Name:       "api-v1-service",
 							PathPrefix: "/api/v1",
 							Strategy:   "least-connections",
@@ -69,7 +69,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 			args: args{prefixPath: ptr("/api/v1/users")},
 			want: &RouteEntry{
 				Path: "/api/v1",
-				Service: &utils.ServiceConfig{
+				Service: &utils.Services{
 					Name:       "api-v1-service",
 					PathPrefix: "/api/v1",
 					Strategy:   "least-connections",
@@ -84,7 +84,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 				Depth3Map: map[string]*RouteEntry{
 					"/api/v2/users": {
 						Path: "/api/v2/users",
-						Service: &utils.ServiceConfig{
+						Service: &utils.Services{
 							Name:       "users-service",
 							PathPrefix: "/api/v2/users",
 							Strategy:   "ip-hash",
@@ -96,7 +96,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 			args: args{prefixPath: ptr("/api/v2/users/profile")},
 			want: &RouteEntry{
 				Path: "/api/v2/users",
-				Service: &utils.ServiceConfig{
+				Service: &utils.Services{
 					Name:       "users-service",
 					PathPrefix: "/api/v2/users",
 					Strategy:   "ip-hash",
@@ -111,7 +111,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 				LongRoutes: []*RouteEntry{
 					{
 						Path: "/api/v1/users/profile",
-						Service: &utils.ServiceConfig{
+						Service: &utils.Services{
 							Name:       "profile-service",
 							PathPrefix: "/api/v1/users/profile",
 							Strategy:   "random",
@@ -123,7 +123,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 			args: args{prefixPath: ptr("/api/v1/users/profile/myuser/something")},
 			want: &RouteEntry{
 				Path: "/api/v1/users/profile",
-				Service: &utils.ServiceConfig{
+				Service: &utils.Services{
 					Name:       "profile-service",
 					PathPrefix: "/api/v1/users/profile",
 					Strategy:   "random",
@@ -137,7 +137,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 			fields: fields{
 				BaseRoute: &RouteEntry{
 					Path: "/",
-					Service: &utils.ServiceConfig{
+					Service: &utils.Services{
 						Name:       "default-service",
 						PathPrefix: "/",
 						Strategy:   "round-robin",
@@ -148,7 +148,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 			args: args{prefixPath: ptr("/unknown/path")},
 			want: &RouteEntry{
 				Path: "/",
-				Service: &utils.ServiceConfig{
+				Service: &utils.Services{
 					Name:       "default-service",
 					PathPrefix: "/",
 					Strategy:   "round-robin",
@@ -170,7 +170,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 				Depth1Map: map[string]*RouteEntry{
 					"/auth": {
 						Path: "/auth",
-						Service: &utils.ServiceConfig{
+						Service: &utils.Services{
 							Name:       "auth-service",
 							PathPrefix: "/auth",
 							Strategy:   "round-robin",
@@ -182,7 +182,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 			args: args{prefixPath: ptr("/auth/")},
 			want: &RouteEntry{
 				Path: "/auth",
-				Service: &utils.ServiceConfig{
+				Service: &utils.Services{
 					Name:       "auth-service",
 					PathPrefix: "/auth",
 					Strategy:   "round-robin",
@@ -197,7 +197,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 				Depth2Map: map[string]*RouteEntry{
 					"/api/v1": {
 						Path: "/api/v1",
-						Service: &utils.ServiceConfig{
+						Service: &utils.Services{
 							Name:       "v1-service",
 							PathPrefix: "/api/v1",
 							Strategy:   "ip-hash",
@@ -209,7 +209,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 			args: args{prefixPath: ptr("/api/v1")},
 			want: &RouteEntry{
 				Path: "/api/v1",
-				Service: &utils.ServiceConfig{
+				Service: &utils.Services{
 					Name:       "v1-service",
 					PathPrefix: "/api/v1",
 					Strategy:   "ip-hash",
@@ -224,7 +224,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 				Depth3Map: map[string]*RouteEntry{
 					"/api/v1/products": {
 						Path: "/api/v1/products",
-						Service: &utils.ServiceConfig{
+						Service: &utils.Services{
 							Name:       "product-service",
 							PathPrefix: "/api/v1/products",
 							Strategy:   "least-connections",
@@ -236,7 +236,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 			args: args{prefixPath: ptr("/api/v1/products/?limit=5")},
 			want: &RouteEntry{
 				Path: "/api/v1/products",
-				Service: &utils.ServiceConfig{
+				Service: &utils.Services{
 					Name:       "product-service",
 					PathPrefix: "/api/v1/products",
 					Strategy:   "least-connections",
@@ -251,7 +251,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 				Depth3Map: map[string]*RouteEntry{
 					"/api/v1/products": {
 						Path: "/api/v1/products",
-						Service: &utils.ServiceConfig{
+						Service: &utils.Services{
 							Name:       "product-service",
 							PathPrefix: "/api/v1/products",
 							Strategy:   "round-robin",
@@ -263,7 +263,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 			args: args{prefixPath: ptr("/api/v1/products/123/reviews")},
 			want: &RouteEntry{
 				Path: "/api/v1/products",
-				Service: &utils.ServiceConfig{
+				Service: &utils.Services{
 					Name:       "product-service",
 					PathPrefix: "/api/v1/products",
 					Strategy:   "round-robin",
@@ -278,7 +278,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 				Depth2Map: map[string]*RouteEntry{
 					"/api/v2": {
 						Path: "/api/v2",
-						Service: &utils.ServiceConfig{
+						Service: &utils.Services{
 							Name:       "v2-service",
 							PathPrefix: "/api/v2",
 							Strategy:   "random",
@@ -296,7 +296,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 			fields: fields{
 				BaseRoute: &RouteEntry{
 					Path: "/",
-					Service: &utils.ServiceConfig{
+					Service: &utils.Services{
 						Name:       "default-service",
 						PathPrefix: "/",
 						Strategy:   "round-robin",
@@ -307,7 +307,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 			args: args{prefixPath: ptr("/no/match/here")},
 			want: &RouteEntry{
 				Path: "/",
-				Service: &utils.ServiceConfig{
+				Service: &utils.Services{
 					Name:       "default-service",
 					PathPrefix: "/",
 					Strategy:   "round-robin",
@@ -322,7 +322,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 				Depth2Map: map[string]*RouteEntry{
 					"/files/v2": {
 						Path: "/files/v2",
-						Service: &utils.ServiceConfig{
+						Service: &utils.Services{
 							Name:       "file-service",
 							PathPrefix: "/files/v2",
 							Strategy:   "round-robin",
@@ -334,7 +334,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 			args: args{prefixPath: ptr("/files/v2/?file=x.pdf")},
 			want: &RouteEntry{
 				Path: "/files/v2",
-				Service: &utils.ServiceConfig{
+				Service: &utils.Services{
 					Name:       "file-service",
 					PathPrefix: "/files/v2",
 					Strategy:   "round-robin",
@@ -349,7 +349,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 				Depth2Map: map[string]*RouteEntry{
 					"/api/v2": {
 						Path: "/api/v2",
-						Service: &utils.ServiceConfig{
+						Service: &utils.Services{
 							Name:       "v2-service",
 							PathPrefix: "/api/v2",
 							Strategy:   "random",
@@ -360,7 +360,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 				Depth3Map: map[string]*RouteEntry{
 					"/api/v2/payments": {
 						Path: "/api/v2/payments",
-						Service: &utils.ServiceConfig{
+						Service: &utils.Services{
 							Name:       "payment-service",
 							PathPrefix: "/api/v2/payments",
 							Strategy:   "round-robin",
@@ -372,7 +372,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 			args: args{prefixPath: ptr("/api/v2/payments/history")},
 			want: &RouteEntry{
 				Path: "/api/v2/payments",
-				Service: &utils.ServiceConfig{
+				Service: &utils.Services{
 					Name:       "payment-service",
 					PathPrefix: "/api/v2/payments",
 					Strategy:   "round-robin",
@@ -387,7 +387,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 				Depth1Map: map[string]*RouteEntry{
 					"/shop": {
 						Path: "/shop",
-						Service: &utils.ServiceConfig{
+						Service: &utils.Services{
 							Name:       "shop-service",
 							PathPrefix: "/shop",
 							Strategy:   "ip-hash",
@@ -398,7 +398,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 				Depth2Map: map[string]*RouteEntry{
 					"/shop/cart": {
 						Path: "/shop/cart",
-						Service: &utils.ServiceConfig{
+						Service: &utils.Services{
 							Name:       "cart-service",
 							PathPrefix: "/shop/cart",
 							Strategy:   "round-robin",
@@ -410,7 +410,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 			args: args{prefixPath: ptr("/shop/cart/view")},
 			want: &RouteEntry{
 				Path: "/shop/cart",
-				Service: &utils.ServiceConfig{
+				Service: &utils.Services{
 					Name:       "cart-service",
 					PathPrefix: "/shop/cart",
 					Strategy:   "round-robin",
@@ -425,7 +425,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 				Depth1Map: map[string]*RouteEntry{
 					"/admin": {
 						Path: "/admin",
-						Service: &utils.ServiceConfig{
+						Service: &utils.Services{
 							Name:       "admin-service",
 							PathPrefix: "/admin",
 							Strategy:   "round-robin",
@@ -444,7 +444,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 				Depth1Map: map[string]*RouteEntry{
 					"/settings": {
 						Path: "/settings",
-						Service: &utils.ServiceConfig{
+						Service: &utils.Services{
 							Name:       "settings-service",
 							PathPrefix: "/settings",
 							Strategy:   "round-robin",
@@ -456,7 +456,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 			args: args{prefixPath: ptr("/settings/?theme=dark")},
 			want: &RouteEntry{
 				Path: "/settings",
-				Service: &utils.ServiceConfig{
+				Service: &utils.Services{
 					Name:       "settings-service",
 					PathPrefix: "/settings",
 					Strategy:   "round-robin",
@@ -471,7 +471,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 				Depth2Map: map[string]*RouteEntry{
 					"/api/v4": {
 						Path: "/api/v4",
-						Service: &utils.ServiceConfig{
+						Service: &utils.Services{
 							Name:       "v4-service",
 							PathPrefix: "/api/v4",
 							Strategy:   "round-robin",
@@ -490,7 +490,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 				LongRoutes: []*RouteEntry{
 					{
 						Path: "/api/v3/logs/errors",
-						Service: &utils.ServiceConfig{
+						Service: &utils.Services{
 							Name:       "error-log-service",
 							PathPrefix: "/api/v3/logs/errors",
 							Strategy:   "least-connections",
@@ -502,7 +502,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 			args: args{prefixPath: ptr("/api/v3/logs/errors/archive/2024")},
 			want: &RouteEntry{
 				Path: "/api/v3/logs/errors",
-				Service: &utils.ServiceConfig{
+				Service: &utils.Services{
 					Name:       "error-log-service",
 					PathPrefix: "/api/v3/logs/errors",
 					Strategy:   "least-connections",
@@ -516,7 +516,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 			fields: fields{
 				BaseRoute: &RouteEntry{
 					Path: "/",
-					Service: &utils.ServiceConfig{
+					Service: &utils.Services{
 						Name:       "base-service",
 						PathPrefix: "/",
 						Strategy:   "round-robin",
@@ -527,7 +527,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 			args: args{prefixPath: ptr("/unknown/path/to/nothing")},
 			want: &RouteEntry{
 				Path: "/",
-				Service: &utils.ServiceConfig{
+				Service: &utils.Services{
 					Name:       "base-service",
 					PathPrefix: "/",
 					Strategy:   "round-robin",
@@ -542,7 +542,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 				Depth3Map: map[string]*RouteEntry{
 					"/api/v1/users": {
 						Path: "/api/v1/users",
-						Service: &utils.ServiceConfig{
+						Service: &utils.Services{
 							Name:       "users-service",
 							PathPrefix: "/api/v1/users",
 							Strategy:   "round-robin",
@@ -553,7 +553,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 				LongRoutes: []*RouteEntry{
 					{
 						Path: "/api/v1/users/admin",
-						Service: &utils.ServiceConfig{
+						Service: &utils.Services{
 							Name:       "admin-service",
 							PathPrefix: "/api/v1/users/admin",
 							Strategy:   "ip-hash",
@@ -565,7 +565,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 			args: args{prefixPath: ptr("/api/v1/users/admin/logs")},
 			want: &RouteEntry{
 				Path: "/api/v1/users/admin",
-				Service: &utils.ServiceConfig{
+				Service: &utils.Services{
 					Name:       "admin-service",
 					PathPrefix: "/api/v1/users/admin",
 					Strategy:   "ip-hash",
@@ -580,7 +580,7 @@ func TestHttpHybridRouting_Route(t *testing.T) {
 				LongRoutes: []*RouteEntry{
 					{
 						Path: "/Metrics/Prometheus",
-						Service: &utils.ServiceConfig{
+						Service: &utils.Services{
 							Name:       "case-sensitive-service",
 							PathPrefix: "/Metrics/Prometheus",
 							Strategy:   "round-robin",

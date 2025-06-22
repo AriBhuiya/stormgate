@@ -2,12 +2,13 @@ package routing_strategy
 
 import (
 	"errors"
+	"fmt"
 	"github.com/aribhuiya/stormgate/internal/utils"
 	"strings"
 )
 
 type SimpleRouting struct {
-	Services *[]utils.ServiceConfig
+	Services *[]utils.Services
 }
 
 func (r *SimpleRouting) Route(prefixPath *string) (*RouteEntry, error) {
@@ -15,17 +16,26 @@ func (r *SimpleRouting) Route(prefixPath *string) (*RouteEntry, error) {
 		return nil, errors.New("invalid path")
 	}
 
-	var matched *utils.ServiceConfig
+	var matched *utils.Services
 	var longest int
 
 	for _, svc := range *r.Services {
-		prefix := strings.TrimRight(svc.PathPrefix, "/")
-		path := strings.TrimRight(*prefixPath, "/")
+		prefix := svc.PathPrefix
+		if prefix != "/" {
+			prefix = strings.TrimRight(prefix, "/")
+		}
+
+		path := *prefixPath
+		if path != "/" {
+			path = strings.TrimRight(path, "/")
+		}
 
 		if strings.HasPrefix(path, prefix) {
-			if len(prefix) > longest {
-				longest = len(prefix)
-				matched = &svc
+			if prefix == "/" || len(path) == len(prefix) || path[len(prefix)] == '/' || path[len(prefix)] == '?' {
+				if len(prefix) > longest {
+					longest = len(prefix)
+					matched = &svc
+				}
 			}
 		}
 	}
@@ -40,7 +50,8 @@ func (r *SimpleRouting) Route(prefixPath *string) (*RouteEntry, error) {
 	return nil, errors.New("no matching service found")
 }
 
-func NewSimpleRouting(services *[]utils.ServiceConfig) *SimpleRouting {
+func NewSimpleRouting(services *[]utils.Services) *SimpleRouting {
+	fmt.Println("Simple Routing used ...")
 	s := SimpleRouting{services}
 	return &s
 }
