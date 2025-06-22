@@ -12,6 +12,6 @@ func main() {
 		log.Fatalf("Failed to load config: %v", err)
 	}
 	log.Printf("\n 🌩️ Stormgate - A light weight High Performance L7 Load Balancer is starting...🚀\n Listening on %s port %d\n", cfg.Server.BindIp, cfg.Server.BindPort)
-	router := routers.NewRouterFromConfig(cfg.Server)
+	router := routers.NewRouterFromConfig(cfg)
 	router.Serve()
 }

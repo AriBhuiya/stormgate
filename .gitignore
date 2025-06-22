@@ -37,3 +37,5 @@ tmp/
 *.tmp
 
 config.yaml
+release/
+tests/
