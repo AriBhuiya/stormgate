@@ -26,6 +26,6 @@ func NewRoundRobin(service *utils.Service) (*RoundRobin, error) {
 }
 
 func (r *RoundRobin) PickBackend(*http.Request) (string, error) {
-	index := r.counter.Add(1) % r.n
+	index := (r.counter.Add(1) - 1) % r.n
 	return r.service.Backends[index], nil
 }
