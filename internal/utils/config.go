@@ -17,10 +17,11 @@ type Balancer struct {
 }
 
 type Service struct {
-	Name       string   `yaml:"name"`
-	PathPrefix string   `yaml:"path_prefix"`
-	Strategy   string   `yaml:"strategy"`
-	Backends   []string `yaml:"backends"`
+	Name           string         `yaml:"name"`
+	PathPrefix     string         `yaml:"path_prefix"`
+	Strategy       string         `yaml:"strategy"`
+	StrategyConfig map[string]any `yaml:"strategy_config"`
+	Backends       []string       `yaml:"backends"`
 }
 
 type Config struct {
