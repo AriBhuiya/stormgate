@@ -15,6 +15,8 @@ func Create(name string, service *utils.Service) (Balancer, error) {
 	switch name {
 	case "round_robin":
 		return NewRoundRobin(service)
+	case "random":
+		return NewRandomAutoSeed(service)
 	}
 	return nil, errors.New("unknown balancer type " + name)
 }
