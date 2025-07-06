@@ -16,7 +16,7 @@ type HttpHybridRouting struct {
 	LongRoutes []*RouteEntry
 }
 
-func NewHttpHybridRouting(services *[]utils.Services) *HttpHybridRouting {
+func NewHttpHybridRouting(services *[]utils.Service) *HttpHybridRouting {
 	fmt.Println("NewHttpHybridRouting used ...")
 	r := HttpHybridRouting{
 		Depth1Map:  make(map[string]*RouteEntry),

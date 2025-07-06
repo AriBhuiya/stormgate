@@ -15,7 +15,7 @@ func NewBasicProxy() *BasicProxy {
 }
 
 func (b BasicProxy) Forward(w http.ResponseWriter, req *http.Request, forwardingEndpoint *string) {
-	fmt.Printf("Forwarding %s -> %s\n", req.URL, forwardingEndpoint)
+	fmt.Printf("Forwarding %s -> %s\n", req.URL, *forwardingEndpoint)
 
 	outReq, err := http.NewRequest(req.Method, *forwardingEndpoint+req.URL.RequestURI(), req.Body)
 	if err != nil {

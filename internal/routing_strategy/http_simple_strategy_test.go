@@ -8,7 +8,7 @@ import (
 
 func TestSimpleRouting_Route(t *testing.T) {
 	type fields struct {
-		Services *[]utils.Services
+		Services *[]utils.Service
 	}
 	type args struct {
 		prefixPath *string
@@ -23,7 +23,7 @@ func TestSimpleRouting_Route(t *testing.T) {
 		{
 			name: "exact prefix match",
 			fields: fields{
-				Services: &[]utils.Services{
+				Services: &[]utils.Service{
 					{Name: "auth-service", PathPrefix: "/api/auth"},
 					{Name: "user-service", PathPrefix: "/api/user"},
 				},
@@ -33,7 +33,7 @@ func TestSimpleRouting_Route(t *testing.T) {
 			},
 			want: &RouteEntry{
 				Path: "/api/auth",
-				Service: &utils.Services{
+				Service: &utils.Service{
 					Name:       "auth-service",
 					PathPrefix: "/api/auth",
 					Strategy:   "",
@@ -45,7 +45,7 @@ func TestSimpleRouting_Route(t *testing.T) {
 		{
 			name: "longest prefix match",
 			fields: fields{
-				Services: &[]utils.Services{
+				Services: &[]utils.Service{
 					{Name: "api-root", PathPrefix: "/api"},
 					{Name: "auth-service", PathPrefix: "/api/auth"},
 				},
@@ -55,7 +55,7 @@ func TestSimpleRouting_Route(t *testing.T) {
 			},
 			want: &RouteEntry{
 				Path: "/api/auth",
-				Service: &utils.Services{
+				Service: &utils.Service{
 					Name:       "auth-service",
 					PathPrefix: "/api/auth",
 					Strategy:   "",
@@ -67,7 +67,7 @@ func TestSimpleRouting_Route(t *testing.T) {
 		{
 			name: "no matching prefix",
 			fields: fields{
-				Services: &[]utils.Services{
+				Services: &[]utils.Service{
 					{Name: "admin-service", PathPrefix: "/admin"},
 				},
 			},
@@ -80,7 +80,7 @@ func TestSimpleRouting_Route(t *testing.T) {
 		{
 			name: "prefix overlaps but not a true match",
 			fields: fields{
-				Services: &[]utils.Services{
+				Services: &[]utils.Service{
 					{Name: "auth-service", PathPrefix: "/api/auth"},
 				},
 			},
@@ -93,7 +93,7 @@ func TestSimpleRouting_Route(t *testing.T) {
 		{
 			name: "nil prefix path",
 			fields: fields{
-				Services: &[]utils.Services{
+				Services: &[]utils.Service{
 					{Name: "api", PathPrefix: "/api"},
 				},
 			},
@@ -106,7 +106,7 @@ func TestSimpleRouting_Route(t *testing.T) {
 		{
 			name: "match with trailing slash",
 			fields: fields{
-				Services: &[]utils.Services{
+				Services: &[]utils.Service{
 					{Name: "auth-service", PathPrefix: "/api/auth"},
 				},
 			},
@@ -115,7 +115,7 @@ func TestSimpleRouting_Route(t *testing.T) {
 			},
 			want: &RouteEntry{
 				Path: "/api/auth",
-				Service: &utils.Services{
+				Service: &utils.Service{
 					Name:       "auth-service",
 					PathPrefix: "/api/auth",
 				},
@@ -125,7 +125,7 @@ func TestSimpleRouting_Route(t *testing.T) {
 		{
 			name: "match with query param",
 			fields: fields{
-				Services: &[]utils.Services{
+				Services: &[]utils.Service{
 					{Name: "auth-service", PathPrefix: "/api/auth"},
 				},
 			},
@@ -134,7 +134,7 @@ func TestSimpleRouting_Route(t *testing.T) {
 			},
 			want: &RouteEntry{
 				Path: "/api/auth",
-				Service: &utils.Services{
+				Service: &utils.Service{
 					Name:       "auth-service",
 					PathPrefix: "/api/auth",
 				},
@@ -144,7 +144,7 @@ func TestSimpleRouting_Route(t *testing.T) {
 		{
 			name: "deep nested match - longest prefix wins",
 			fields: fields{
-				Services: &[]utils.Services{
+				Services: &[]utils.Service{
 					{Name: "root", PathPrefix: "/"},
 					{Name: "api", PathPrefix: "/api"},
 					{Name: "auth", PathPrefix: "/api/auth"},
@@ -156,7 +156,7 @@ func TestSimpleRouting_Route(t *testing.T) {
 			},
 			want: &RouteEntry{
 				Path: "/api/auth/login",
-				Service: &utils.Services{
+				Service: &utils.Service{
 					Name:       "login",
 					PathPrefix: "/api/auth/login",
 				},
@@ -166,7 +166,7 @@ func TestSimpleRouting_Route(t *testing.T) {
 		{
 			name: "match root fallback",
 			fields: fields{
-				Services: &[]utils.Services{
+				Services: &[]utils.Service{
 					{Name: "root", PathPrefix: "/"},
 				},
 			},
@@ -175,7 +175,7 @@ func TestSimpleRouting_Route(t *testing.T) {
 			},
 			want: &RouteEntry{
 				Path: "/",
-				Service: &utils.Services{
+				Service: &utils.Service{
 					Name:       "root",
 					PathPrefix: "/",
 				},
@@ -185,7 +185,7 @@ func TestSimpleRouting_Route(t *testing.T) {
 		{
 			name: "disallow double slash in path",
 			fields: fields{
-				Services: &[]utils.Services{
+				Services: &[]utils.Service{
 					{Name: "auth-service", PathPrefix: "/api/auth"},
 				},
 			},
@@ -198,7 +198,7 @@ func TestSimpleRouting_Route(t *testing.T) {
 		{
 			name: "match prefix before query param with slash",
 			fields: fields{
-				Services: &[]utils.Services{
+				Services: &[]utils.Service{
 					{Name: "user-service", PathPrefix: "/api/user"},
 				},
 			},
@@ -207,7 +207,7 @@ func TestSimpleRouting_Route(t *testing.T) {
 			},
 			want: &RouteEntry{
 				Path: "/api/user",
-				Service: &utils.Services{
+				Service: &utils.Service{
 					Name:       "user-service",
 					PathPrefix: "/api/user",
 				},
@@ -217,7 +217,7 @@ func TestSimpleRouting_Route(t *testing.T) {
 		{
 			name: "partial overlap should not match",
 			fields: fields{
-				Services: &[]utils.Services{
+				Services: &[]utils.Service{
 					{Name: "user-service", PathPrefix: "/api/user"},
 				},
 			},
@@ -230,7 +230,7 @@ func TestSimpleRouting_Route(t *testing.T) {
 		{
 			name: "exact match with single slash root path",
 			fields: fields{
-				Services: &[]utils.Services{
+				Services: &[]utils.Service{
 					{Name: "root", PathPrefix: "/"},
 				},
 			},
@@ -239,7 +239,7 @@ func TestSimpleRouting_Route(t *testing.T) {
 			},
 			want: &RouteEntry{
 				Path: "/",
-				Service: &utils.Services{
+				Service: &utils.Service{
 					Name:       "root",
 					PathPrefix: "/",
 				},
@@ -249,7 +249,7 @@ func TestSimpleRouting_Route(t *testing.T) {
 		{
 			name: "longer prefix match over shorter prefix",
 			fields: fields{
-				Services: &[]utils.Services{
+				Services: &[]utils.Service{
 					{Name: "api", PathPrefix: "/api"},
 					{Name: "auth", PathPrefix: "/api/auth"},
 				},
@@ -259,7 +259,7 @@ func TestSimpleRouting_Route(t *testing.T) {
 			},
 			want: &RouteEntry{
 				Path: "/api/auth",
-				Service: &utils.Services{
+				Service: &utils.Service{
 					Name:       "auth",
 					PathPrefix: "/api/auth",
 				},
@@ -269,7 +269,7 @@ func TestSimpleRouting_Route(t *testing.T) {
 		{
 			name: "no match for partial prefix overlap",
 			fields: fields{
-				Services: &[]utils.Services{
+				Services: &[]utils.Service{
 					{Name: "auth", PathPrefix: "/api/auth"},
 				},
 			},
@@ -282,7 +282,7 @@ func TestSimpleRouting_Route(t *testing.T) {
 		{
 			name: "match with trailing slash in request path",
 			fields: fields{
-				Services: &[]utils.Services{
+				Services: &[]utils.Service{
 					{Name: "auth", PathPrefix: "/api/auth"},
 				},
 			},
@@ -291,7 +291,7 @@ func TestSimpleRouting_Route(t *testing.T) {
 			},
 			want: &RouteEntry{
 				Path: "/api/auth",
-				Service: &utils.Services{
+				Service: &utils.Service{
 					Name:       "auth",
 					PathPrefix: "/api/auth",
 				},
@@ -301,7 +301,7 @@ func TestSimpleRouting_Route(t *testing.T) {
 		{
 			name: "match with query params in request",
 			fields: fields{
-				Services: &[]utils.Services{
+				Services: &[]utils.Service{
 					{Name: "user", PathPrefix: "/api/user"},
 				},
 			},
@@ -310,7 +310,7 @@ func TestSimpleRouting_Route(t *testing.T) {
 			},
 			want: &RouteEntry{
 				Path: "/api/user",
-				Service: &utils.Services{
+				Service: &utils.Service{
 					Name:       "user",
 					PathPrefix: "/api/user",
 				},
@@ -320,7 +320,7 @@ func TestSimpleRouting_Route(t *testing.T) {
 		{
 			name: "no match with double slash in path",
 			fields: fields{
-				Services: &[]utils.Services{
+				Services: &[]utils.Service{
 					{Name: "auth", PathPrefix: "/api/auth"},
 				},
 			},
@@ -333,7 +333,7 @@ func TestSimpleRouting_Route(t *testing.T) {
 		{
 			name: "match fallback to root",
 			fields: fields{
-				Services: &[]utils.Services{
+				Services: &[]utils.Service{
 					{Name: "root", PathPrefix: "/"},
 				},
 			},
@@ -342,7 +342,7 @@ func TestSimpleRouting_Route(t *testing.T) {
 			},
 			want: &RouteEntry{
 				Path: "/",
-				Service: &utils.Services{
+				Service: &utils.Service{
 					Name:       "root",
 					PathPrefix: "/",
 				},
@@ -352,7 +352,7 @@ func TestSimpleRouting_Route(t *testing.T) {
 		{
 			name: "empty string as path",
 			fields: fields{
-				Services: &[]utils.Services{
+				Services: &[]utils.Service{
 					{Name: "root", PathPrefix: "/"},
 				},
 			},
@@ -365,7 +365,7 @@ func TestSimpleRouting_Route(t *testing.T) {
 		{
 			name: "nil path input",
 			fields: fields{
-				Services: &[]utils.Services{
+				Services: &[]utils.Service{
 					{Name: "root", PathPrefix: "/"},
 				},
 			},

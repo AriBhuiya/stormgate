@@ -8,7 +8,7 @@ import (
 )
 
 type SimpleRouting struct {
-	Services *[]utils.Services
+	Services *[]utils.Service
 }
 
 func (r *SimpleRouting) Route(prefixPath *string) (*RouteEntry, error) {
@@ -16,7 +16,7 @@ func (r *SimpleRouting) Route(prefixPath *string) (*RouteEntry, error) {
 		return nil, errors.New("invalid path")
 	}
 
-	var matched *utils.Services
+	var matched *utils.Service
 	var longest int
 
 	for _, svc := range *r.Services {
@@ -50,7 +50,7 @@ func (r *SimpleRouting) Route(prefixPath *string) (*RouteEntry, error) {
 	return nil, errors.New("no matching service found")
 }
 
-func NewSimpleRouting(services *[]utils.Services) *SimpleRouting {
+func NewSimpleRouting(services *[]utils.Service) *SimpleRouting {
 	fmt.Println("Simple Routing used ...")
 	s := SimpleRouting{services}
 	return &s

@@ -1,5 +1,6 @@
 package routers
 
+// TODO: Remove Routers as its now integrated in stormgate/wire.go
 import (
 	"fmt"
 	"github.com/aribhuiya/stormgate/internal/proxies/http_proxies"
@@ -25,7 +26,7 @@ type ServerConfig struct {
 }
 
 // NewHttpRouter Use to Create a HttpRouter Instance from a HttpRouter.ServerConfig object with appropriate defaults
-func NewHttpRouter(serverCfg ServerConfig, serviceConfigs *[]utils.Services, strategyName string) *HttpRouter {
+func NewHttpRouter(serverCfg ServerConfig, serviceConfigs *[]utils.Service, strategyName string) *HttpRouter {
 	if serverCfg.BindIp == "" {
 		serverCfg.BindIp = "127.0.0.1"
 	}

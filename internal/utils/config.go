@@ -16,7 +16,7 @@ type Balancer struct {
 	RoutingStrategy string `yaml:"routing_strategy"`
 }
 
-type Services struct {
+type Service struct {
 	Name       string   `yaml:"name"`
 	PathPrefix string   `yaml:"path_prefix"`
 	Strategy   string   `yaml:"strategy"`
@@ -24,9 +24,9 @@ type Services struct {
 }
 
 type Config struct {
-	Server   Server     `yaml:"server"`
-	Services []Services `yaml:"services"`
-	Balancer Balancer   `yaml:"balancer"`
+	Server   Server    `yaml:"server"`
+	Services []Service `yaml:"services"`
+	Balancer Balancer  `yaml:"balancer"`
 }
 
 func LoadConfig(path string) (Config, error) {

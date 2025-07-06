@@ -7,7 +7,10 @@ import (
 	"net/http"
 )
 
+var PORT = ":9001"
+
 type EchoResponse struct {
+	Port       string              `json:"port"`
 	Method     string              `json:"method"`
 	Path       string              `json:"path"`
 	Query      map[string][]string `json:"query"`
@@ -30,6 +33,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response := EchoResponse{
+		Port:       PORT,
 		Method:     r.Method,
 		Path:       r.URL.Path,
 		Query:      r.URL.Query(),
@@ -49,7 +53,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	port := ":9001"
+	port := PORT
 	http.HandleFunc("/", handler)
 	fmt.Printf("🚀 Echo backend listening on %s}", port)
 	err := http.ListenAndServe(port, nil)

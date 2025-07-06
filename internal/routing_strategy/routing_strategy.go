@@ -11,10 +11,10 @@ type RoutingStrategy interface {
 
 type RouteEntry struct {
 	Path    string
-	Service *utils.Services
+	Service *utils.Service
 }
 
-func CreateRoutingStrategy(name string, services *[]utils.Services) RoutingStrategy {
+func CreateRoutingStrategy(name string, services *[]utils.Service) RoutingStrategy {
 	switch name {
 	case "hybrid":
 		return NewHttpHybridRouting(services)
