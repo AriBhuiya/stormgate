@@ -2,6 +2,7 @@ package balancers
 
 import (
 	"errors"
+	"github.com/aribhuiya/stormgate/internal/balancers/consistent_hash"
 	"github.com/aribhuiya/stormgate/internal/utils"
 	"net/http"
 )
@@ -19,6 +20,9 @@ func Create(name string, service *utils.Service) (Balancer, error) {
 		return NewRandomAutoSeed(service)
 	case "weighted_round_robin":
 		return NewWeightedRoundRobin(service)
+	case "consistent_hash":
+		return consistent_hash.NewHashModulo(service)
+
 	}
 
 	return nil, errors.New("unknown balancer type " + name)

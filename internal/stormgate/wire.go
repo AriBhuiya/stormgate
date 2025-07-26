@@ -89,15 +89,10 @@ func (s *StormGate) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	// Use Balancer
 	forwardPath, err := service.balancer.PickBackend(req)
 	if err != nil {
-		http.Error(w, "E-1 Internal Server Error", http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("E-1 Internal Server Error %s", err), http.StatusInternalServerError)
+		return
 	}
 
-	// Proxy
 	s.Proxy.Forward(w, req, &forwardPath)
 
-	_, err = fmt.Fprintf(w, `{
-  		"matched_path": "%s",
-  		"service": "%s",
-  		"duration_ns": %d
-	}`, route.Path, route.Service.Name)
 }
