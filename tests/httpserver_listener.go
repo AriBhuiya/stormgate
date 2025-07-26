@@ -52,7 +52,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewEncoder(w).Encode(response)
 }
 
-func main() {
+func main1() {
 	port := PORT
 	http.HandleFunc("/", handler)
 	fmt.Printf("🚀 Echo backend listening on %s}", port)
