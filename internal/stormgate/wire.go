@@ -8,6 +8,7 @@ import (
 	"github.com/aribhuiya/stormgate/internal/utils"
 	"log"
 	"net/http"
+	"time"
 )
 
 type StormGate struct {
@@ -91,6 +92,19 @@ func (s *StormGate) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		http.Error(w, fmt.Sprintf("E-1 Internal Server Error %s", err), http.StatusInternalServerError)
 		return
+	}
+
+	val := req.Context().Value("inject_cookie")
+	if cookieVal, ok := val.(string); ok {
+		path := service.config.PathPrefix
+		println("Setting cookie to " + cookieVal)
+		http.SetCookie(w, &http.Cookie{
+			Name:     "stormgate-id",
+			Value:    cookieVal,
+			Path:     path,
+			HttpOnly: true,
+			Expires:  time.Now().Add(365 * 24 * time.Hour),
+		})
 	}
 
 	s.Proxy.Forward(w, req, &forwardPath)

@@ -68,6 +68,30 @@ services:
     backends:
       - http://localhost:9011
       - http://localhost:9012
+      
+  - name: apiv3
+    path_prefix: "/api/v3"
+    strategy: consistent_hash
+    strategy_config:
+      source: ip # ip based
+      
+  - name: apiv4
+    path_prefix: "/api/v4"
+    strategy: consistent_hash
+    strategy_config:
+      source: header # header based
+      key: "user_id"  # required for header
+      fallback_to_ip: true
+  
+  - name: apiv3
+    path_prefix: "/api/v3"
+    strategy: consistent_hash
+    strategy_config:
+      source: cookie # cookie
+      key: "user_id"  # optional for cookie. if no key, entire payload from cookie name is taken
+      name: "storm_custom" # required for cookie (cookie name)
+      fallback_to_ip: true # default is False
+      inject_if_missing: true # default is False
 
   # Add more services here...
 ```

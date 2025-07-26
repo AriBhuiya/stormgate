@@ -1,6 +1,7 @@
 package consistent_hash
 
 import (
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
@@ -20,7 +21,10 @@ func (c *cookie_source) getSource(req *http.Request) string {
 	cookie, err := req.Cookie(c.cookieName)
 	if err != nil {
 		if c.injectIfMissing {
-			return generateUUID()
+			cookieVal := generateUUID()
+			ctx := context.WithValue(req.Context(), "inject_cookie", cookieVal)
+			*req = *req.WithContext(ctx) // mutate the *req object in place
+			return cookieVal
 		}
 		return ""
 	}
@@ -40,7 +44,7 @@ func (c *cookie_source) getSource(req *http.Request) string {
 		return ""
 	}
 	val, exists := parsed[c.cookieKey]
-	if !exists {
+	if !exists || val == nil {
 		return ""
 	}
 	strVal, ok := val.(string)
@@ -55,15 +59,6 @@ func generateUUID() string {
 }
 
 func NewCookieSource(service *utils.Service) (*cookie_source, error) {
-	name, ok := service.StrategyConfig["name"].(string)
-	if !ok {
-		return nil, errors.New("cookie name is required")
-	}
-	key, ok := service.StrategyConfig["key"].(string)
-	if !ok {
-		key = ""
-	}
-
 	injectIfMissing := false
 	injectIfMissingRaw, exists := service.StrategyConfig["inject_if_missing"]
 	if exists {
@@ -72,6 +67,18 @@ func NewCookieSource(service *utils.Service) (*cookie_source, error) {
 			return nil, errors.New("inject_if_missing value must be a true/false")
 		}
 		injectIfMissing = val
+	}
+
+	name, ok := service.StrategyConfig["name"].(string)
+	if !ok && !injectIfMissing {
+		return nil, errors.New("cookie name is required or use inject_if_missing")
+	} else if !ok {
+		name = "stormgate-id" //TODO: Use a config driven id for better layering
+	}
+
+	key, ok := service.StrategyConfig["key"].(string)
+	if !ok {
+		key = ""
 	}
 
 	return &cookie_source{
