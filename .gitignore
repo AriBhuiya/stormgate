@@ -36,6 +36,6 @@ vendor/
 tmp/
 *.tmp
 
-config.yaml
+Config.yaml
 release/
 tests/

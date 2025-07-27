@@ -5,7 +5,7 @@ import (
 	"github.com/aribhuiya/stormgate/internal/utils"
 )
 
-type service struct {
-	config   utils.Service
-	balancer balancers.Balancer
+type Service struct {
+	Config   utils.Service
+	Balancer balancers.Balancer
 }

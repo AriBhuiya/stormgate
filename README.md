@@ -33,7 +33,7 @@ go run ./cmd/main.go
 
 ### 3. Sample Config
 
-Make sure your config.yaml is present at the project root. Example:
+Make sure your Config.yaml is present at the project root. Example:
 
 ```
 server:
@@ -42,7 +42,7 @@ server:
   read_timeout_ms: 5000
   write_timeout_ms: 5000
 
-balancer:
+Balancer:
   routing_strategy: 'simple' # or 'hybrid'
 
 services:
