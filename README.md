@@ -1,111 +1,102 @@
-# Stormgate [WORK - IN - PROGRESS]
-
-A lightweight L7 Loadbalancer written in Go.
-Can Handle storms of traffic. Reasonably well.
-
-## 📦 Features
-
-- ✅ Simple & Hybrid routing strategies
-- ⚖️ Load balancers:
-    - Round Robin
-    - Weighted Round Robin
-    - Random
-    - IP Hashing (planned)
-    - Sticky IP (planned)
-- 🔀 Prefix-based routing (fast-match via hybrid bucketing)
-- 🔧 YAML-based configuration
-- 🚀 Designed for extensibility (GRPC & middleware planned)
+# 🌩️ Stormgate
+*A Lightweight, High-Performance Layer-7 Load Balancer written in Go*
 
 ---
 
-## 🚀 Getting Started
+### **Why Stormgate?**
+Stormgate is a **simple yet powerful** L7 load balancer built for speed, flexibility, and developer-friendliness.  
+It supports multiple balancing algorithms, sticky session strategies, health checks, and a simple YAML config — all in one lightweight binary.
 
-### 1. Build
+---
 
+## ✨ Features
+- **Multiple load-balancing strategies**:
+    - Round Robin
+    - Random
+    - Weighted Round Robin
+    - Consistent Hash (by IP, Header, or Cookie-Injection)
+- **Health checks** (HTTP) with automatic failover
+- **Simple routing rules** via path prefixes
+- **No external dependencies** — single Go binary
+
+---
+
+## 📦 Quick Start
+
+### 1. Clone & Build
 ```bash
-go build ./...
+git clone https://github.com/AriBhuiya/stormgate.git
+cd stormgate
+go build -o stormgate ./cmd
 ```
 
-### 2. Run
-```
-go run ./cmd/main.go
-```
-
-### 3. Sample Config
-
-Make sure your Config.yaml is present at the project root. Example:
-
-```
+### 2. Create `config.yaml`
+Example minimal config:
+```yaml
 server:
-  bind_ip: "0.0.0.0"
-  bind_port: 10000
-  read_timeout_ms: 5000
-  write_timeout_ms: 5000
-
-Balancer:
-  routing_strategy: 'simple' # or 'hybrid'
+bind_ip: "0.0.0.0"
+bind_port: 10000
+balancer:
+routing_strategy: "simple"
 
 services:
-  - name: api
-    path_prefix: "/api/"
-    strategy: random
-    backends:
-      - http://localhost:9001
-      - http://localhost:9002
-
-  - name: auth
-    path_prefix: "/auth/"
-    strategy: weighted_round_robin
-    strategy_config:
-      weights: [3, 1]
-    backends:
-      - http://localhost:9011
-      - http://localhost:9012
-  
-  - name: authv2
-    path_prefix: "/auth1/v2/"
-    strategy: round_robin
-    backends:
-      - http://localhost:9011
-      - http://localhost:9012
-      
-  - name: apiv3
-    path_prefix: "/api/v3"
-    strategy: consistent_hash
-    strategy_config:
-      source: ip # ip based
-      
-  - name: apiv4
-    path_prefix: "/api/v4"
-    strategy: consistent_hash
-    strategy_config:
-      source: header # header based
-      key: "user_id"  # required for header
-      fallback_to_ip: true
-  
-  - name: apiv3
-    path_prefix: "/api/v3"
-    strategy: consistent_hash
-    strategy_config:
-      source: cookie # cookie
-      key: "user_id"  # optional for cookie. if no key, entire payload from cookie name is taken
-      name: "storm_custom" # required for cookie (cookie name)
-      fallback_to_ip: true # default is False
-      inject_if_missing: true # default is False
-
-  # Add more services here...
+- name: "api"
+  path_prefix: "/api/"
+  strategy: "round_robin"
+  backends:
+    - "http://localhost:9001"
+    - "http://localhost:9002"
 ```
 
-### 4. Testing
-
-To run all tests:
+### 3. Run
 ```
-go test ./...
+./stormgate
 ```
-To run smoke test:
+Stormgate will listen on `0.0.0.0:10000` and forward requests according to `config.yaml`.
 
-From the root directory, run
+---
+
+## ⚙️ Configuration Guide
+
+A full example config showing **all features** is in `sample_config.yaml`.
+
+---
+
+## 🧪 Testing
+
+Stormgate ships with **self-contained smoke tests** in `tests/`:
+- `smoke_core.sh` — verifies all balancing strategies
+- `smoke_health.sh` — verifies health checks and failover
+
+Run from the repo root:
 ```bash
-bash tests/smoke_health.sh && tests/smoke_core.sh
+bash tests/smoke_core.sh
+bash tests/smoke_health.sh
+```
 
+These scripts:
+- Spin up mock backends on `:9001` / `:9002`
+- Build and run Stormgate with a temporary config
+- Verify routing correctness
+- Clean up everything on exit
+
+---
+
+## 📊 Example Output
+```bash
+>> starting stormgate
+>> test: round robin /api/
+RR counts: 10 vs 10
+>> test: random /random/
+Random counts: 9 vs 11
+✅ ALL SMOKE TESTS PASSED
+```
+
+---
+
+## 🛠 Development
+
+### Run Unit Tests
+```bash
+go test ./...
 ```
