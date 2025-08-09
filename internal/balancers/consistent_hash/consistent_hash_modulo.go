@@ -74,6 +74,9 @@ func hashString(s string) uint64 {
 }
 
 func (h *HashModulo) PickBackend(req *http.Request) (string, error) {
+	if len(h.service.Backends) == 0 {
+		return "", errors.New("no healthy backends")
+	}
 	key := h.source.getSource(req)
 
 	if key == "" && h.fallbackToIpSource != nil {
@@ -87,4 +90,11 @@ func (h *HashModulo) PickBackend(req *http.Request) (string, error) {
 	hash := hashString(key)
 	index := int(hash % uint64(len(h.service.Backends)))
 	return h.service.Backends[index], nil
+}
+
+func (h *HashModulo) SetHealthyBackends(healthyBackends []string) {
+	if hasChanged := utils.HasBackendChanged(h.service.Backends, healthyBackends); !hasChanged {
+		return
+	}
+	h.service.Backends = healthyBackends
 }

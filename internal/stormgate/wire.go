@@ -8,11 +8,12 @@ import (
 	"github.com/aribhuiya/stormgate/internal/utils"
 	"log"
 	"net/http"
+	"time"
 )
 
 type StormGate struct {
 	ServerConfig ServerConfig
-	Services     map[string]*service
+	Services     map[string]*Service
 	routing_strategy.RoutingStrategy
 	Proxy http_proxies.Proxy
 }
@@ -45,16 +46,16 @@ func NewStormGate(config utils.Config) (*StormGate, error) {
 	}, nil
 }
 
-func BuildServicesFromConfig(services []utils.Service) (map[string]*service, error) {
-	servicesMap := make(map[string]*service)
+func BuildServicesFromConfig(services []utils.Service) (map[string]*Service, error) {
+	servicesMap := make(map[string]*Service)
 	for _, svcCfg := range services {
 		balancer, err := balancers.Create(svcCfg.Strategy, &svcCfg)
 		if err != nil {
-			return nil, fmt.Errorf("failed to create balancer for service %s: %w", svcCfg.Name, err)
+			return nil, fmt.Errorf("failed to create Balancer for Service %s: %w", svcCfg.Name, err)
 		}
-		svc := &service{
-			config:   svcCfg,
-			balancer: balancer,
+		svc := &Service{
+			Config:   svcCfg,
+			Balancer: balancer,
 		}
 		servicesMap[svcCfg.PathPrefix] = svc
 	}
@@ -87,10 +88,23 @@ func (s *StormGate) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// Use Balancer
-	forwardPath, err := service.balancer.PickBackend(req)
+	forwardPath, err := service.Balancer.PickBackend(req)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("E-1 Internal Server Error %s", err), http.StatusInternalServerError)
 		return
+	}
+
+	val := req.Context().Value("inject_cookie")
+	if cookieVal, ok := val.(string); ok {
+		path := service.Config.PathPrefix
+		println("Setting cookie to " + cookieVal)
+		http.SetCookie(w, &http.Cookie{
+			Name:     "stormgate-id",
+			Value:    cookieVal,
+			Path:     path,
+			HttpOnly: true,
+			Expires:  time.Now().Add(365 * 24 * time.Hour),
+		})
 	}
 
 	s.Proxy.Forward(w, req, &forwardPath)

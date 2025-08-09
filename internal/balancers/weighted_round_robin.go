@@ -14,6 +14,8 @@ type WeightedRoundRobin struct {
 	n           uint64
 	weights     []int32
 	totalWeight uint64
+	allBackends []string
+	allWeights  []int32
 }
 
 func validateWeights(backends []string, weights []int32) error {
@@ -31,7 +33,7 @@ func validateWeights(backends []string, weights []int32) error {
 
 func (w *WeightedRoundRobin) PickBackend(*http.Request) (string, error) {
 	if len(w.service.Backends) == 0 || len(w.weights) != len(w.service.Backends) {
-		return "", errors.New("invalid backends or weight configuration")
+		return "", errors.New("no healthy backends")
 	}
 
 	index := (w.counter.Add(1) - 1) % w.totalWeight
@@ -107,5 +109,44 @@ func NewWeightedRoundRobin(service *utils.Service) (*WeightedRoundRobin, error) 
 		n:           uint64(len(service.Backends)),
 		weights:     normalized,
 		totalWeight: totalWeight,
+		allBackends: append([]string(nil), service.Backends...),
+		allWeights:  append([]int32(nil), normalized...),
 	}, nil
+}
+
+func (w *WeightedRoundRobin) SetHealthyBackends(healthyBackends []string) {
+	if hasChanged := utils.HasBackendChanged(w.service.Backends, healthyBackends); !hasChanged {
+		return
+	}
+	if len(healthyBackends) == 0 {
+		w.service.Backends = nil
+		w.weights = nil
+		w.totalWeight = 0
+		return
+	}
+
+	healthySet := make(map[string]bool)
+	for _, h := range healthyBackends {
+		healthySet[h] = true
+	}
+
+	newBackends := make([]string, 0, len(healthyBackends))
+	newWeights := make([]int32, 0, len(healthyBackends))
+
+	for i, backend := range w.allBackends {
+		if healthySet[backend] {
+			newBackends = append(newBackends, backend)
+			newWeights = append(newWeights, w.allWeights[i])
+		}
+	}
+
+	norm := normalizeWeights(newWeights)
+	total := uint64(0)
+	for _, w := range norm {
+		total += uint64(w)
+	}
+
+	w.service.Backends = newBackends
+	w.weights = norm
+	w.totalWeight = total
 }

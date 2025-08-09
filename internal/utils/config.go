@@ -22,12 +22,19 @@ type Service struct {
 	Strategy       string         `yaml:"strategy"`
 	StrategyConfig map[string]any `yaml:"strategy_config"`
 	Backends       []string       `yaml:"backends"`
+	Health         *HealthConfig  `yaml:"health"`
 }
 
 type Config struct {
 	Server   Server    `yaml:"server"`
 	Services []Service `yaml:"services"`
 	Balancer Balancer  `yaml:"balancer"`
+}
+
+type HealthConfig struct {
+	Endpoint  string `yaml:"health-endpoint"`
+	Type      string `yaml:"type"`
+	Frequency int64  `yaml:"frequency"`
 }
 
 func LoadConfig(path string) (Config, error) {
