@@ -102,3 +102,10 @@ To run all tests:
 ```
 go test ./...
 ```
+To run smoke test:
+
+From the root directory, run
+```bash
+bash tests/smoke_health.sh && tests/smoke_core.sh
+
+```

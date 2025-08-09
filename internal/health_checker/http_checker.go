@@ -44,7 +44,7 @@ func isHealthy(url string) bool {
 	defer func(Body io.ReadCloser) {
 		_ = Body.Close()
 	}(resp.Body)
-	if resp.StatusCode != http.StatusOK {
+	if resp.StatusCode == http.StatusOK {
 		return true
 	}
 	return false
