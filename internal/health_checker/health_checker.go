@@ -1,7 +1,9 @@
 package health_checker
 
-import "github.com/aribhuiya/stormgate/internal/stormgate"
+import "time"
 
 type HealthChecker interface {
-	CheckHealth(service stormgate.Service)
+	CheckHealth() []string
+	CheckAndUpdateBalancer()
+	GetInterval() time.Duration
 }

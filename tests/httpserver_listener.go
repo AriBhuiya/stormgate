@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-var PORT = ":9001"
+var PORT = ":9002"
 
 type EchoResponse struct {
 	Port       string              `json:"port"`
@@ -52,7 +52,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewEncoder(w).Encode(response)
 }
 
-func main1() {
+func main() {
 	port := PORT
 	http.HandleFunc("/", handler)
 	fmt.Printf("🚀 Echo backend listening on %s}", port)

@@ -10,6 +10,7 @@ import (
 type Balancer interface {
 	// PickBackend returning a string as copied should be fine as Go creates a pointer to the raw data under the hood
 	PickBackend(request *http.Request) (string, error)
+	SetHealthyBackends(healthyBackends []string)
 }
 
 func Create(name string, service *utils.Service) (Balancer, error) {
@@ -22,7 +23,6 @@ func Create(name string, service *utils.Service) (Balancer, error) {
 		return NewWeightedRoundRobin(service)
 	case "consistent_hash":
 		return consistent_hash.NewHashModulo(service)
-
 	}
 
 	return nil, errors.New("unknown balancer type " + name)

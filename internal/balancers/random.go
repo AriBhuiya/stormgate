@@ -30,6 +30,16 @@ func NewRandomAutoSeed(service *utils.Service) (*Random, error) {
 }
 
 func (r *Random) PickBackend(request *http.Request) (string, error) {
+	if len(r.service.Backends) == 0 {
+		return "", errors.New("no healthy backends available")
+	}
 	idx := rand.Int() % len(r.service.Backends)
 	return r.service.Backends[idx], nil
+}
+
+func (r *Random) SetHealthyBackends(healthyBackends []string) {
+	if hasChanged := utils.HasBackendChanged(r.service.Backends, healthyBackends); !hasChanged {
+		return
+	}
+	r.service.Backends = healthyBackends
 }

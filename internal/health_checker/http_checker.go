@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"time"
 )
 
 type HttpChecker struct {
@@ -21,14 +22,18 @@ func NewHttpChecker(service stormgate.Service, endPoint string, interval uint64)
 	}
 }
 
-func (h HttpChecker) CheckHealth(service stormgate.Service) {
-	backends := service.Config.Backends
+func (h *HttpChecker) CheckHealth() []string {
+	backends := h.Service.Config.Backends
+	var healthyBackends []string
+
 	for _, backend := range backends {
 		endpoint := strings.TrimRight(backend, "/") + "/" + h.EndPoint
-		if isHealthy := isHealthy(endpoint); !isHealthy {
-			//TODO: remove the endpoint
+		if isHealthy(endpoint) {
+			healthyBackends = append(healthyBackends, backend)
 		}
 	}
+
+	return healthyBackends
 }
 
 func isHealthy(url string) bool {
@@ -43,4 +48,13 @@ func isHealthy(url string) bool {
 		return true
 	}
 	return false
+}
+
+func (h *HttpChecker) CheckAndUpdateBalancer() {
+	healthyBackends := h.CheckHealth()
+	h.Service.Balancer.SetHealthyBackends(healthyBackends)
+}
+
+func (h *HttpChecker) GetInterval() time.Duration {
+	return time.Duration(h.IntervalMs) * time.Millisecond
 }
