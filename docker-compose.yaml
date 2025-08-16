@@ -1,0 +1,24 @@
+version: "3.9"
+
+services:
+  stormgate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: stormgate
+    ports:
+      - "10000:10000"
+    # Mount your config into the container at /app/config.yaml
+    volumes:
+      - ./config.yaml:/app/config.yaml:ro
+    environment:
+      - CONFIG_PATH=/app/config.yaml
+
+    read_only: true
+    cap_drop:
+      - ALL
+    restart: unless-stopped
+#networks:
+#  stormgate-net:
+#    driver: bridge
+#    external: true
