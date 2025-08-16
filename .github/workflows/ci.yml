@@ -1,0 +1,53 @@
+name: Stormgate CI
+
+on:
+  pull_request:
+    branches: [ "master" ]  # Triggers when PR targets master
+    types: [ opened, synchronize, reopened, ready_for_review ]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+
+      - name: Cache Go modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Download dependencies
+        run: go mod tidy
+
+      - name: Build stormgate binary
+        run: |
+          go build -o stormgate ./cmd
+
+      - name: Run unit tests
+        run: |
+          go test ./...
+
+      - name: Run smoke tests
+        run: |
+          chmod +x tests/smoke_core.sh
+          chmod +x tests/smoke_health.sh
+          ./tests/smoke_core.sh
+          ./tests/smoke_health.sh
+
+      - name: Upload Stormgate binary as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: stormgate-binary
+          path: ./stormgate
