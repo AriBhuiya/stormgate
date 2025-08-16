@@ -226,3 +226,5 @@ Random counts: 9 vs 11
 ```bash
 go test ./...
 ```
+
+If you like this project, please star the repo. Thanks!
