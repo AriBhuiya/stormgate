@@ -1,8 +1,8 @@
 package http_proxies
 
 import (
-	"fmt"
 	"io"
+	"log"
 	"net/http"
 )
 
@@ -15,7 +15,7 @@ func NewBasicProxy() *BasicProxy {
 }
 
 func (b BasicProxy) Forward(w http.ResponseWriter, req *http.Request, forwardingEndpoint *string) {
-	fmt.Printf("Forwarding %s -> %s\n", req.URL, *forwardingEndpoint)
+	//fmt.Printf("Forwarding %s -> %s\n", req.URL, *forwardingEndpoint)
 
 	outReq, err := http.NewRequest(req.Method, *forwardingEndpoint+req.URL.RequestURI(), req.Body)
 	if err != nil {
@@ -46,7 +46,7 @@ func (b BasicProxy) Forward(w http.ResponseWriter, req *http.Request, forwarding
 	// Stream response body
 	_, err = io.Copy(w, resp.Body)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return
 	}
 }

@@ -2,8 +2,8 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
+	"log"
 	"net/http"
 )
 
@@ -55,10 +55,10 @@ func handler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	port := PORT
 	http.HandleFunc("/", handler)
-	fmt.Printf("🚀 Echo backend listening on %s}", port)
+	log.Printf("🚀 Echo backend listening on %s}", port)
 	err := http.ListenAndServe(port, nil)
 	if err != nil {
-		fmt.Println("<UNK> Echo backend listening on :9001 failed:", err)
+		log.Println("<UNK> Echo backend listening on :9001 failed:", err)
 		return
 	}
 }

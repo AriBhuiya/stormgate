@@ -60,6 +60,12 @@ Stormgate will listen on `0.0.0.0:10000` and forward requests according to `conf
 
 A full example config showing **all features** is in `sample_config.yaml`.
 
+## Docker
+```bash
+docker compose up
+```
+
+
 ---
 
 ## 🧪 Testing

@@ -2,8 +2,8 @@ package routing_strategy
 
 import (
 	"errors"
-	"fmt"
 	"github.com/aribhuiya/stormgate/internal/utils"
+	"log"
 	"strings"
 )
 
@@ -51,7 +51,7 @@ func (r *SimpleRouting) Route(prefixPath *string) (*RouteEntry, error) {
 }
 
 func NewSimpleRouting(services *[]utils.Service) *SimpleRouting {
-	fmt.Println("Simple Routing used ...")
+	log.Println("Simple Routing used ...")
 	s := SimpleRouting{services}
 	return &s
 }

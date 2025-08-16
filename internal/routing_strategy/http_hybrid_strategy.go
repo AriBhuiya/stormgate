@@ -2,8 +2,8 @@ package routing_strategy
 
 import (
 	"errors"
-	"fmt"
 	"github.com/aribhuiya/stormgate/internal/utils"
+	"log"
 	"sort"
 	"strings"
 )
@@ -17,7 +17,7 @@ type HttpHybridRouting struct {
 }
 
 func NewHttpHybridRouting(services *[]utils.Service) *HttpHybridRouting {
-	fmt.Println("NewHttpHybridRouting used ...")
+	log.Println("NewHttpHybridRouting used ...")
 	r := HttpHybridRouting{
 		Depth1Map:  make(map[string]*RouteEntry),
 		Depth2Map:  make(map[string]*RouteEntry),
