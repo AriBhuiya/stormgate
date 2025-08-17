@@ -4,6 +4,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"time"
 )
 
 type BasicProxy struct {
@@ -11,7 +12,13 @@ type BasicProxy struct {
 }
 
 func NewBasicProxy() *BasicProxy {
-	return &BasicProxy{&http.Client{}}
+	transport := &http.Transport{
+		MaxIdleConns:        100,
+		MaxIdleConnsPerHost: 64,
+		IdleConnTimeout:     90 * time.Second,
+		DisableKeepAlives:   false,
+	}
+	return &BasicProxy{&http.Client{Transport: transport}}
 }
 
 func (b BasicProxy) Forward(w http.ResponseWriter, req *http.Request, forwardingEndpoint *string) {
