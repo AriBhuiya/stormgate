@@ -39,3 +39,5 @@ tmp/
 Config.yaml
 release/
 tests/
+t1.txt
+results/

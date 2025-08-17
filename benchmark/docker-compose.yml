@@ -1,0 +1,80 @@
+version: '3.9'
+
+services:
+  backend1:
+    build: ./backend
+    container_name: backend1
+    ports:
+      - "9001:8080"
+    environment:
+      - NAME=backend1
+    networks:
+      - benchmark_net
+
+  backend2:
+    build: ./backend
+    container_name: backend2
+    ports:
+      - "9002:8080"
+    environment:
+      - NAME=backend2
+    networks:
+      - benchmark_net
+
+  backend3:
+    build: ./backend
+    container_name: backend3
+    ports:
+      - "9003:8080"
+    environment:
+      - NAME=backend3
+    networks:
+      - benchmark_net
+
+  backend4:
+    build: ./backend
+    container_name: backend4
+    environment:
+      - NAME=backend4
+    ports:
+      - "9004:8080"
+    networks:
+      - benchmark_net
+
+  # Nginx LB
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8081:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    depends_on:
+      - backend1
+      - backend2
+      - backend3
+#      - backend4
+    networks:
+      - benchmark_net
+
+  # stormgate
+  stormgate:
+    build:
+      context: ../
+      dockerfile: Dockerfile
+    container_name: stormgate-benchmark
+    volumes:
+      - ./stormgate/config.yaml:/app/config.yaml:ro
+    ports:
+      - "8082:10000"
+    depends_on:
+      - backend1
+      - backend2
+      - backend3
+#      - backend4
+    networks:
+      - benchmark_net
+
+
+networks:
+  benchmark_net:

@@ -5,12 +5,13 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 )
 
-var PORT = ":9001"
+var PORT = ":8080"
+var NAME = os.Getenv("NAME")
 
-// var NAME = os.Getenv("NAME")
-var NAME = "Backend-1"
+//var NAME = "Backend-1"
 
 type EchoResponse struct {
 	Name       string              `json:"name"`
@@ -63,7 +64,7 @@ func main() {
 	log.Printf("🚀 Echo backend listening on %s}", port)
 	err := http.ListenAndServe(port, nil)
 	if err != nil {
-		log.Println("<UNK> Echo backend listening on :9001 failed:", err)
+		log.Println("<UNK> Echo backend listening on :8080 failed:", err)
 		return
 	}
 }
