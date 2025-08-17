@@ -7,9 +7,13 @@ import (
 	"net/http"
 )
 
-var PORT = ":9002"
+var PORT = ":9001"
+
+// var NAME = os.Getenv("NAME")
+var NAME = "Backend-1"
 
 type EchoResponse struct {
+	Name       string              `json:"name"`
 	Port       string              `json:"port"`
 	Method     string              `json:"method"`
 	Path       string              `json:"path"`
@@ -33,6 +37,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response := EchoResponse{
+		Name:       NAME,
 		Port:       PORT,
 		Method:     r.Method,
 		Path:       r.URL.Path,
