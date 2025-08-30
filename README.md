@@ -227,4 +227,112 @@ Random counts: 9 vs 11
 go test ./...
 ```
 
+## Running benchmarks
+To run the environment:
+```bash
+cd benchmark
+mkdir results
+docker compose up
+```
+In a new terminal:
+[Using wrk]
+> You may need to install `wrk` locally
+```bash
+chmod +x benchmark1.sh
+./benchmark1.sh
+```
+To use k6,
+```bash
+chmod +x benchmark_k6.sh
+./benchmark_k6.sh
+```
+> You can optimize nginx by changing the files in `backend/nginx` folder and restarting the docker compose setup
+
+
+## Results
+### Stormgate vs NGINX — Out-of-the-Box Round Robin Benchmark
+
+| Metric                   | NGINX (8081)      | Stormgate (8082) | 
+|--------------------------|------------------|------------------|
+| **Requests/sec**         | 15,926.82         | **56,658.38**     |
+| **Total Requests**       | 478,255           | **1,700,332**     |
+| **Avg Latency**          | 114.11 ms         | **7.11 ms**       |
+| **Max Latency**          | 1.23 s            | **126.11 ms**     |
+| **Std Dev (Latency)**    | 200.22 ms         | **3.29 ms**       |
+| **Transfer/sec**         | 6.49 MB/s         | **22.42 MB/s**    |
+| **Socket Errors (Read)** | **5,689**         | 0                |
+
+✅ **Benchmark Duration:** 30 seconds  
+🧪 **Load Config:** 12 threads, 400 connections
+
+### 🌩️ Stormgate vs NGINX — Optimized Round Robin Benchmark
+
+| Metric                   | NGINX (8081)     | Stormgate (8082)  |
+|--------------------------|------------------|--------------------|
+| **Requests/sec**         | 35,021.07         | 56,147.82           |
+| **Total Requests**       | 1,051,091         | 1,684,952           |
+| **Avg Latency**          | 11.29 ms          | 7.15 ms             |
+| **Max Latency**          | 40.70 ms          | 64.07 ms            |
+| **Std Dev (Latency)**    | 2.49 ms           | 3.07 ms             |
+| **Transfer/sec**         | 15.30 MB/s        | 22.22 MB/s          |
+
+✅ **Benchmark Duration:** 30 seconds  
+🧪 **Load Config:** 12 threads, 400 connections
+
+
+### 🌩️ Stormgate vs NGINX — Optimized Benchmark (Keepalive: 1000)
+
+| Metric                   | NGINX (8081)     | Stormgate (8082)  |
+|--------------------------|------------------|--------------------|
+| **Requests/sec**         | 34,396.52         | 55,536.16           |
+| **Total Requests**       | 1,032,377         | 1,671,802           |
+| **Avg Latency**          | 11.49 ms          | 7.20 ms             |
+| **Max Latency**          | 29.26 ms          | 52.37 ms            |
+| **Std Dev (Latency)**    | 2.70 ms           | 3.05 ms             |
+| **Transfer/sec**         | 15.02 MB/s        | 21.98 MB/s          |
+
+✅ **Benchmark Duration:** 30 seconds  
+🧪 **Load Config:** 12 threads, 400 connections  
+🔧 **Nginx Keepalive Connections:** 1000
+
+
+# 🌩️ Stormgate vs NGINX Benchmark Report (k6)
+
+**📅 Date:** Sat Aug 23 19:40:41 BST 2025  
+**🧪 Tool:** [k6](https://k6.io/)  
+**🖥️ Test Type:** High-throughput load test using `constant-arrival-rate`
+
+---
+
+## 🔧 Test Configuration
+
+| Parameter              | Value            |
+|------------------------|------------------|
+| Duration               | 30 seconds       |
+| Request Rate           | 20,000 req/sec   |
+| Executor               | constant-arrival-rate |
+| Time Unit              | 1s               |
+| Preallocated VUs       | 1000             |
+| Max VUs                | 2000 (NGINX), 1000 (Stormgate) |
+| Endpoint               | `/round-robin/`  |
+| Keep-Alive             | Enabled          |
+
+---
+
+## 📊 Results Summary
+
+| Metric                  | NGINX                            | Stormgate                        |
+|-------------------------|----------------------------------|----------------------------------|
+| **Total Requests**      | 445,265                          | **600,001**                      |
+| **Requests/sec**        | 14,837.78                        | **19,998.95**                    |
+| **Avg Latency**         | 92.91 ms                         | **0.82 ms**                      |
+| **Median Latency**      | 147.74 ms                        | **0.66 ms**                      |
+| **95th Percentile**     | 214.04 ms                        | **1.66 ms**                      |
+| **Max Latency**         | 301.64 ms                        | **36.79 ms**                     |
+| **Dropped Iterations**  | 154,735                          | **0**                            |
+| **HTTP Errors**         | 0                                | 0                                |
+| **Data Received**       | 219 MB                           | **265 MB**                       |
+| **Data Sent**           | 47 MB                            | **64 MB**                        |
+
+---
 If you like this project, please star the repo. Thanks!
